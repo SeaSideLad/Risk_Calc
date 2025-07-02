@@ -53,46 +53,101 @@
     button:hover {
       background-color: #0056b3;
     }
+	
+	.output {
+  margin-top: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  color: #2a7b2a;
+}
   </style>
 </head>
 <body>
   <h2>Stock Risk Calculator</h2>
-  <label for="currentPrice">Current Price (£):</label>
+  <label for="currentPrice">Current Price ($):</label>
   <input type="number" id="currentPrice" step="0.01" placeholder="Enter current price">
 
-  <label for="lowOfDay">Low of the Day (£):</label>
+  <label for="lowOfDay">Low of the Day ($):</label>
   <input type="number" id="lowOfDay" step="0.01" placeholder="Enter low of the day">
 
-  <label for="riskAmount">Risk Amount (£):</label>
+  <label for="riskAmount">Risk Amount ($):</label>
   <input type="number" id="riskAmount" value="1000" step="0.01">
 
   <button onclick="calculateShares()">Calculate Shares to Buy</button>
 
-  <div id="result"></div>
-<div id="shareValue"></div>
+<table id="resultsTable" style="margin-top:20px; width:100%; border-collapse: collapse; display:none;">
+  <thead>
+    <tr>
+      <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: left;">Risk %</th>
+      <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: right;">Shares to Buy</th>
+      <th style="border-bottom: 1px solid #ddd; padding: 8px; text-align: right;">Share Value ($)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1%</td>
+      <td id="shares100" style="padding: 8px; text-align: right;"></td>
+      <td id="value100" style="padding: 8px; text-align: right;"></td>
+    </tr>
+    <tr>
+      <td>0.5%</td>
+      <td id="shares50" style="padding: 8px; text-align: right;"></td>
+      <td id="value50" style="padding: 8px; text-align: right;"></td>
+    </tr>
+    <tr>
+      <td>0.25%</td>
+      <td id="shares25" style="padding: 8px; text-align: right;"></td>
+      <td id="value25" style="padding: 8px; text-align: right;"></td>
+    </tr>
+  </tbody>
+</table>
 
   <script>
-    function calculateShares() {
-      const currentPrice = parseFloat(document.getElementById("currentPrice").value);
-      const lowOfDay = parseFloat(document.getElementById("lowOfDay").value);
-      const riskAmount = parseFloat(document.getElementById("riskAmount").value);
-      
-      if (isNaN(currentPrice) || isNaN(lowOfDay) || isNaN(riskAmount)) {
-        document.getElementById("result").textContent = "Please fill in all fields.";
-        return;
-      }
+function calculateShares() {
+  const currentPrice = parseFloat(document.getElementById("currentPrice").value);
+  const lowOfDay = parseFloat(document.getElementById("lowOfDay").value);
+  const riskAmount = parseFloat(document.getElementById("riskAmount").value);
 
-      const riskPerShare = currentPrice - lowOfDay;
+  const table = document.getElementById("resultsTable");
 
-      if (riskPerShare <= 0) {
-        document.getElementById("result").textContent = "Invalid inputs: current price must be higher than low of the day.";
-        return;
-      }
+  if (isNaN(currentPrice) || isNaN(lowOfDay) || isNaN(riskAmount)) {
+    table.style.display = "none";
+    alert("Please fill in all fields.");
+    return;
+  }
 
-      const shares = Math.floor(riskAmount / riskPerShare);
-      document.getElementById("result").textContent = `Buy ${shares} shares`;
-	  document.getElementById("shareValue").textContent = `Share Value: ${(shares * currentPrice).toFixed(2)}`;
-    }
+  const riskPerShare = currentPrice - lowOfDay;
+
+  if (riskPerShare <= 0) {
+    table.style.display = "none";
+    alert("Invalid inputs: current price must be higher than low of the day.");
+    return;
+  }
+
+  // Calculate shares and values for each risk level
+  const shares100 = Math.floor(riskAmount / riskPerShare);
+  const shares50 = Math.floor((riskAmount * 0.5) / riskPerShare);
+  const shares25 = Math.floor((riskAmount * 0.25) / riskPerShare);
+
+  // Calculate share values
+  const value100 = (shares100 * currentPrice).toFixed(2);
+  const value50 = (shares50 * currentPrice).toFixed(2);
+  const value25 = (shares25 * currentPrice).toFixed(2);
+
+  // Fill table
+  document.getElementById("shares100").textContent = shares100.toLocaleString();
+  document.getElementById("value100").textContent = value100;
+
+  document.getElementById("shares50").textContent = shares50.toLocaleString();
+  document.getElementById("value50").textContent = value50;
+
+  document.getElementById("shares25").textContent = shares25.toLocaleString();
+  document.getElementById("value25").textContent = value25;
+
+  // Show the table
+  table.style.display = "table";
+}
   </script>
 </body>
 </html>
