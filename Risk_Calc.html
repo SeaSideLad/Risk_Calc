@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock Risk Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      max-width: 400px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 1em;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+      color: #2a7b2a;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>Stock Risk Calculator</h2>
+  <label for="currentPrice">Current Price (£):</label>
+  <input type="number" id="currentPrice" step="0.01" placeholder="Enter current price">
+
+  <label for="lowOfDay">Low of the Day (£):</label>
+  <input type="number" id="lowOfDay" step="0.01" placeholder="Enter low of the day">
+
+  <label for="riskAmount">Risk Amount (£):</label>
+  <input type="number" id="riskAmount" value="1000" step="0.01">
+
+  <button onclick="calculateShares()">Calculate Shares to Buy</button>
+
+  <div id="result"></div>
+
+  <script>
+    function calculateShares() {
+      const currentPrice = parseFloat(document.getElementById("currentPrice").value);
+      const lowOfDay = parseFloat(document.getElementById("lowOfDay").value);
+      const riskAmount = parseFloat(document.getElementById("riskAmount").value);
+      
+      if (isNaN(currentPrice) || isNaN(lowOfDay) || isNaN(riskAmount)) {
+        document.getElementById("result").textContent = "Please fill in all fields.";
+        return;
+      }
+
+      const riskPerShare = currentPrice - lowOfDay;
+
+      if (riskPerShare <= 0) {
+        document.getElementById("result").textContent = "Invalid inputs: current price must be higher than low of the day.";
+        return;
+      }
+
+      const shares = Math.floor(riskAmount / riskPerShare);
+      document.getElementById("result").textContent = `Buy ${shares} shares`;
+    }
+  </script>
+</body>
+</html>
